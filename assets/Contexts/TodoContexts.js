@@ -6,7 +6,7 @@ class TodoContextsProvider extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      todos: [{ task: 'do something' }], // Added an "id" property
+      todos: [{ name: 'do something' }], // Added an "id" property
     };
   }
 
