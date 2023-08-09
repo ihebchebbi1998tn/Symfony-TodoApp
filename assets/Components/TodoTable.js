@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext ,useState} from "react";
 import { TodoContext } from "../Contexts/TodoContexts";
 import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
@@ -11,8 +11,10 @@ import AddIcon from '@mui/icons-material/Add';
 
 function TodoTable() {
   const context = useContext(TodoContext);
+  const [addTodo, setAddTodo] = useState('');
 
   return (
+    <form onSubmit={(event) => {context.createTodo(event, {name: addTodo})}}>
     <Table>
       <TableHead>
         <TableRow>
@@ -23,14 +25,14 @@ function TodoTable() {
       <TableBody>
         <TableRow>
             <TableCell align="center">
-                <TextField/>
+                <TextField value={addTodo} onChange={(event) => {setAddTodo(event.target.value)}} fullWidth={true} label="new task"/>
             </TableCell>
             <TableCell>
-                <IconButton><AddIcon/></IconButton>
+                <IconButton type="submit"><AddIcon/></IconButton>
             </TableCell>
         </TableRow>
-        {context.todos.map((todo) => (
-          <TableRow>
+        {context.todos.slice().reverse().map((todo , index) => (
+          <TableRow key={'todo ' + index}>
             <TableCell>{todo.name}</TableCell>
             <TableCell align="right"><IconButton><EditIcon/></IconButton>
             <IconButton><DeleteIcon/></IconButton>
@@ -40,6 +42,7 @@ function TodoTable() {
         ))}
       </TableBody>
     </Table>
+    </form>
   );
 }
 

@@ -11,8 +11,13 @@ class TodoContextsProvider extends Component {
   }
 
   // Create
-  createTodo = () => {
-   
+  createTodo(event,todo)  {
+    event.preventDefault();
+   let data = [...this.state.todos] ;
+   data.push(todo);
+   this.setState ({
+    todos: data,
+   });
   }
 
   // Update
