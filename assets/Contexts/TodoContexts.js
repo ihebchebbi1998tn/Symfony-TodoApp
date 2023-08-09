@@ -38,8 +38,17 @@ class TodoContextsProvider extends Component {
   }
 
   // Delete
-  deleteTodo = () => {
-    
+  deleteTodo = (data) => {
+    let todos = [...this.state.todos];
+    let todo = todos.find(todo => {
+        return todo.id === data.id;
+  });
+
+  todos.splice(todos.indexOf(todo),1) ;
+  this.setState({
+    todos: todos ,
+}) ;
+
   }
 
   render() {

@@ -10,14 +10,17 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import DoneIcon from '@mui/icons-material/Done';
 import CancelIcon from '@mui/icons-material/Cancel';
-
+import DeleteDialog from "./DeleteDialog";
 function TodoTable() {
   const context = useContext(TodoContext);
   const [addTodo, setAddTodo] = useState("");
   const [editIsShown, setEditIsSHown] = useState(false);
   const [editTodo, setEditTodo] = useState("");
+  const [deleteConfirmationIsShown, setDeleteConfirmationIsShown] = useState(false);
+  const [todoToBeDeleted, setTodoToBeDeleted] = useState(null);
 
   return (
+    <Fragment>
     <form
       onSubmit={(event) => {
         context.createTodo(event, { name: addTodo });
@@ -85,7 +88,7 @@ function TodoTable() {
                   >
                     <EditIcon />
                   </IconButton>
-                  <IconButton>
+                  <IconButton onClick={() =>{setDeleteConfirmationIsShown(true); setTodoToBeDeleted(todo)}}>
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
@@ -94,6 +97,11 @@ function TodoTable() {
         </TableBody>
       </Table>
     </form>
+   {deleteConfirmationIsShown && (
+    <DeleteDialog todo={todoToBeDeleted} open={deleteConfirmationIsShown} setDeleteConfirmationIsShown={setDeleteConfirmationIsShown} /> 
+   )}
+    
+    </Fragment>
   );
 }
 
