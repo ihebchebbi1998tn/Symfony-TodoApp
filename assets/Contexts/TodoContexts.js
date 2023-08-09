@@ -6,7 +6,11 @@ class TodoContextsProvider extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      todos: [{ name: 'do something' }], // Added an "id" property
+      todos: [{ id: 1, name: 'do something' },
+      { id: 2, name: 'do something' },
+      { id: 3, name: 'do something' }
+    
+    ], // Added an "id" property
     };
   }
 
@@ -21,8 +25,16 @@ class TodoContextsProvider extends Component {
   }
 
   // Update
-  updateTodo = () => {
-    
+  updateTodo(data) {
+    let todos =[...this.state.todos]; 
+    let todo = todos.find(todo => {
+      return todo.id === data.id
+    });
+
+    todo.name = data.name ;
+    this.setState({
+        todos: todos ,
+    }) ;
   }
 
   // Delete
