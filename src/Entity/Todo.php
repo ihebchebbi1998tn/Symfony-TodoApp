@@ -26,7 +26,7 @@ class Todo
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -35,6 +35,6 @@ class Todo
 
     public function toArray()
     {
-    return ['id' => $this->id, 'name' => $this->name];
+        return ['id' => $this->id, 'name' => $this->name];
     }
 }

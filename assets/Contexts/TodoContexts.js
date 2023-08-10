@@ -7,7 +7,7 @@ class TodoContextsProvider extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      todos: [], // Ajout d'une propriété "id"
+      todos: [],
     };
     this.readTodo();
   }
@@ -15,7 +15,7 @@ class TodoContextsProvider extends Component {
   readTodo = () => {
     axios.get('/api/todo/read')
       .then(response => {
-        console.log(response.data); // Log the data received from the API
+        console.log(response.data);
         this.setState({
           todos: response.data,
         });
@@ -24,18 +24,21 @@ class TodoContextsProvider extends Component {
         console.error(error);
       });
   }
-  
-  // Créer une tâche
+
   createTodo = (event, todo) => {
     event.preventDefault();
-    let data = [...this.state.todos];
-    data.push(todo);
-    this.setState({
-      todos: data,
-    });
+    axios.post('/api/todo/create', todo)
+      .then(response => {
+        console.log(response.data);
+        this.setState(prevState => ({
+          todos: [...prevState.todos, response.data.todo], // Corrected response data property
+        }));
+      })
+      .catch(error => {
+        console.error(error);
+      });
   }
 
-  // Mettre à jour une tâche
   updateTodo = (data) => {
     let todos = [...this.state.todos];
     let todo = todos.find(todo => todo.id === data.id);
@@ -48,7 +51,6 @@ class TodoContextsProvider extends Component {
     }
   }
 
-  // Supprimer une tâche
   deleteTodo = (data) => {
     let todos = [...this.state.todos];
     let todo = todos.find(todo => todo.id === data.id);
@@ -60,7 +62,6 @@ class TodoContextsProvider extends Component {
       });
     }
   }
-
 
   render() {
     return (
