@@ -1,4 +1,5 @@
 import React, { Component, createContext } from "react";
+import axios from 'axios';
 
 export const TodoContext = createContext();
 
@@ -6,58 +7,69 @@ class TodoContextsProvider extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      todos: [{ id: 1, name: 'do something' },
-      { id: 2, name: 'do something' },
-      { id: 3, name: 'do something' }
-    
-    ], // Added an "id" property
+      todos: [], // Ajout d'une propriété "id"
     };
+    this.readTodo();
   }
 
-  // Create
-  createTodo(event,todo)  {
+  readTodo = () => {
+    axios.get('/api/todo/read')
+      .then(response => {
+        console.log(response.data); // Log the data received from the API
+        this.setState({
+          todos: response.data,
+        });
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+  
+  // Créer une tâche
+  createTodo = (event, todo) => {
     event.preventDefault();
-   let data = [...this.state.todos] ;
-   data.push(todo);
-   this.setState ({
-    todos: data,
-   });
-  }
-
-  // Update
-  updateTodo(data) {
-    let todos =[...this.state.todos]; 
-    let todo = todos.find(todo => {
-      return todo.id === data.id
-    });
-
-    todo.name = data.name ;
+    let data = [...this.state.todos];
+    data.push(todo);
     this.setState({
-        todos: todos ,
-    }) ;
+      todos: data,
+    });
   }
 
-  // Delete
+  // Mettre à jour une tâche
+  updateTodo = (data) => {
+    let todos = [...this.state.todos];
+    let todo = todos.find(todo => todo.id === data.id);
+
+    if (todo) {
+      todo.name = data.name;
+      this.setState({
+        todos: todos,
+      });
+    }
+  }
+
+  // Supprimer une tâche
   deleteTodo = (data) => {
     let todos = [...this.state.todos];
-    let todo = todos.find(todo => {
-        return todo.id === data.id;
-  });
+    let todo = todos.find(todo => todo.id === data.id);
 
-  todos.splice(todos.indexOf(todo),1) ;
-  this.setState({
-    todos: todos ,
-}) ;
-
+    if (todo) {
+      todos.splice(todos.indexOf(todo), 1);
+      this.setState({
+        todos: todos,
+      });
+    }
   }
+
 
   render() {
     return (
       <TodoContext.Provider value={{
         ...this.state,
-        createTodo: this.createTodo.bind(this),
-        updateTodo: this.updateTodo.bind(this),
-        deleteTodo: this.deleteTodo.bind(this),
+        createTodo: this.createTodo,
+        readTodo: this.readTodo,
+        updateTodo: this.updateTodo,
+        deleteTodo: this.deleteTodo,
       }}>
         {this.props.children}
       </TodoContext.Provider>
