@@ -31,7 +31,7 @@ class TodoContextsProvider extends Component {
       .then(response => {
         console.log(response.data);
         this.setState(prevState => ({
-          todos: [...prevState.todos, response.data.todo], // Corrected response data property
+          todos: [...prevState.todos, response.data.todo],
         }));
       })
       .catch(error => {
@@ -40,27 +40,38 @@ class TodoContextsProvider extends Component {
   }
 
   updateTodo = (data) => {
-    let todos = [...this.state.todos];
-    let todo = todos.find(todo => todo.id === data.id);
+    axios.put(`/api/todo/update/${data.id}`, data)
+      .then(response => {
+        let todos = [...this.state.todos];
+        let updatedTodos = todos.map(todo => {
+          if (todo.id === data.id) {
+            return { ...todo, name: data.name };
+          }
+          return todo;
+        });
 
-    if (todo) {
-      todo.name = data.name;
-      this.setState({
-        todos: todos,
+        this.setState({
+          todos: updatedTodos,
+        });
+      })
+      .catch(error => {
+        console.error('Read Todo Error:', error);
+
       });
-    }
   }
 
   deleteTodo = (data) => {
-    let todos = [...this.state.todos];
-    let todo = todos.find(todo => todo.id === data.id);
+    axios.delete(`/api/todo/delete/${data.id}`)
+      .then(() => {
+        let todos = this.state.todos.filter(todo => todo.id !== data.id);
+        this.setState({
+          todos: todos,
+        });
+      })
+      .catch(error => {
+        console.error('Read Todo Error:', error);
 
-    if (todo) {
-      todos.splice(todos.indexOf(todo), 1);
-      this.setState({
-        todos: todos,
       });
-    }
   }
 
   render() {
