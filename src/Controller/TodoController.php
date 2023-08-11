@@ -40,6 +40,8 @@ class TodoController extends AbstractController
         $content = json_decode($request->getContent());
         $todo = new Todo();
         $todo->setName($content->name);
+        $todo->setDescription($content->description);
+
 
         try {
             $this->entityManager->persist($todo);
@@ -58,23 +60,25 @@ class TodoController extends AbstractController
     }
 
     #[Route('/update/{id}', name: 'api_todo_update', methods: ['PUT'])]
-    public function update(Request $request, Todo $todo): Response
-    {
-        $content = json_decode($request->getContent());
-        $todo->setName($content->name);
+public function update(Request $request, Todo $todo): Response
+{
+    $content = json_decode($request->getContent());
+    $todo->setName($content->name);
+    $todo->setDescription($content->description); // Add this line to update description as well
 
-        try {
-            $this->entityManager->flush();
-        } catch (\Exception $exception) {
-            return $this->json([
-                'message' => ['text' => ['Could not modify in the database.'], 'level' => 'error'],
-            ]);
-        }
-
+    try {
+        $this->entityManager->flush();
+    } catch (\Exception $exception) {
         return $this->json([
-            'message' => ['text' => ['Todo has been updated!'], 'level' => 'success'],
+            'message' => ['text' => ['Could not modify in the database.'], 'level' => 'error'],
         ]);
     }
+
+    return $this->json([
+        'message' => ['text' => ['Todo has been updated!'], 'level' => 'success'],
+    ]);
+}
+
 
     #[Route('/delete/{id}', name: 'api_todo_delete', methods: ['DELETE'])]
     public function delete(Todo $todo): Response

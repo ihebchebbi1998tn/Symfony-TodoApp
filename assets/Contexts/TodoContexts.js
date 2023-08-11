@@ -31,9 +31,8 @@ class TodoContextProvider extends React.Component {
                     });
                 }
             }).catch(error => {
-            console.error(error);
-        });
- 
+                console.error(error);
+            });
     }
  
     //read
@@ -48,7 +47,6 @@ class TodoContextProvider extends React.Component {
         });
     }
  
-    //update
     updateTodo(data) {
         axios.put('/api/todo/update/' + data.id, data)
             .then(response => {
@@ -58,20 +56,24 @@ class TodoContextProvider extends React.Component {
                     });
                 } else {
                     let todos = [...this.state.todos];
-                    let todo = todos.find(todo => {
-                        return todo.id === data.id;
-                    });
- 
-                    todo.name = data.name;
- 
+                    let todoIndex = todos.findIndex(todo => todo.id === data.id);
+    
+                    if (todoIndex !== -1) {
+                        todos[todoIndex] = {
+                            ...todos[todoIndex],
+                            name: data.name,
+                            description: data.description,
+                        };
+                    }
+    
                     this.setState({
                         todos: todos,
                         message: response.data.message,
                     });
                 }
             }).catch(error => {
-            console.error(error);
-        });
+                console.error(error);
+            });
     }
  
     //delete
