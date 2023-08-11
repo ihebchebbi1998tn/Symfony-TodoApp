@@ -44,13 +44,17 @@ class TodoController extends AbstractController
         try {
             $this->entityManager->persist($todo);
             $this->entityManager->flush();
-
-            return $this->json([
-                'todo' => $todo->toArray(),
-            ]);
         } catch (\Exception $exception) {
-            return $this->json(['error' => 'An error occurred while creating the todo.']);
+            return $this->json([
+                'message' => ['text' => ['Could not submit to do to the database.'], 'level' => 'error'],
+            ]);
         }
+
+        return $this->json([
+            'todo' => $todo->toArray(),
+            'message' => ['text' => ['Todo has been created!', 'Task:' . $content->name], 'level' => 'success'],
+        ]);
+
     }
 
     #[Route('/update/{id}', name: 'api_todo_update', methods: ['PUT'])]
@@ -62,11 +66,13 @@ class TodoController extends AbstractController
         try {
             $this->entityManager->flush();
         } catch (\Exception $exception) {
-            return $this->json(['error' => 'An error occurred while updating the todo.']);
+            return $this->json([
+                'message' => ['text' => ['Could not modify in the database.'], 'level' => 'error'],
+            ]);
         }
 
         return $this->json([
-            'message' => 'Todo has been updated',
+            'message' => ['text' => ['Todo has been updated!'], 'level' => 'success'],
         ]);
     }
 
@@ -77,11 +83,12 @@ class TodoController extends AbstractController
             $this->entityManager->remove($todo);
             $this->entityManager->flush();
         } catch (\Exception $exception) {
-            return $this->json(['error' => 'An error occurred while deleting the todo.']);
+            return $this->json([
+                'message' => ['text' => ['Could not delete in the database.'], 'level' => 'error'],
+            ]);
         }
 
         return $this->json([
-            'message' => 'Todo has been deleted',
-        ]);
+            'message' => ['text' => ['Todo has been deleted!'], 'level' => 'success'],        ]);
     }
 }

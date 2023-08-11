@@ -1,92 +1,119 @@
-import React, { Component, createContext } from "react";
+import React, {createContext} from 'react';
 import axios from 'axios';
-
+ 
 export const TodoContext = createContext();
-
-class TodoContextsProvider extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      todos: [],
-    };
-    this.readTodo();
-  }
-
-  readTodo = () => {
-    axios.get('/api/todo/read')
-      .then(response => {
-        console.log(response.data);
-        this.setState({
-          todos: response.data,
+ 
+class TodoContextProvider extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            todos: [],
+            message: {},
+        };
+        this.readTodo();
+    }
+ 
+    //create
+    createTodo(event, todo) {
+        event.preventDefault();
+        axios.post('/api/todo/create', todo)
+            .then(response => {
+                if (response.data.message.level === 'success') {
+                    let data = [...this.state.todos];
+                    data.push(response.data.todo);
+                    this.setState({
+                        todos: data,
+                        message: response.data.message,
+                    });
+                } else {
+                    this.setState({
+                        message: response.data.message,
+                    });
+                }
+            }).catch(error => {
+            console.error(error);
         });
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }
-
-  createTodo = (event, todo) => {
-    event.preventDefault();
-    axios.post('/api/todo/create', todo)
-      .then(response => {
-        console.log(response.data);
-        this.setState(prevState => ({
-          todos: [...prevState.todos, response.data.todo],
-        }));
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }
-
-  updateTodo = (data) => {
-    axios.put(`/api/todo/update/${data.id}`, data)
-      .then(response => {
-        let todos = [...this.state.todos];
-        let updatedTodos = todos.map(todo => {
-          if (todo.id === data.id) {
-            return { ...todo, name: data.name };
-          }
-          return todo;
+ 
+    }
+ 
+    //read
+    readTodo() {
+        axios.get('/api/todo/read')
+            .then(response => {
+                this.setState({
+                    todos: response.data,
+                });
+            }).catch(error => {
+            console.error(error);
         });
-
-        this.setState({
-          todos: updatedTodos,
+    }
+ 
+    //update
+    updateTodo(data) {
+        axios.put('/api/todo/update/' + data.id, data)
+            .then(response => {
+                if (response.data.message.level === 'error') {
+                    this.setState({
+                        message: response.data.message,
+                    });
+                } else {
+                    let todos = [...this.state.todos];
+                    let todo = todos.find(todo => {
+                        return todo.id === data.id;
+                    });
+ 
+                    todo.name = data.name;
+ 
+                    this.setState({
+                        todos: todos,
+                        message: response.data.message,
+                    });
+                }
+            }).catch(error => {
+            console.error(error);
         });
-      })
-      .catch(error => {
-        console.error('Read Todo Error:', error);
-
-      });
-  }
-
-  deleteTodo = (data) => {
-    axios.delete(`/api/todo/delete/${data.id}`)
-      .then(() => {
-        let todos = this.state.todos.filter(todo => todo.id !== data.id);
-        this.setState({
-          todos: todos,
+    }
+ 
+    //delete
+    deleteTodo(data) {
+        axios.delete('/api/todo/delete/' + data.id)
+            .then(response => {
+                if (response.data.message.level === 'error') {
+                    this.setState({
+                        message: response.data.message,
+                    });
+                } else {
+                    //message
+                    let todos = [...this.state.todos];
+                    let todo = todos.find(todo => {
+                        return todo.id === data.id;
+                    });
+ 
+                    todos.splice(todos.indexOf(todo), 1);
+ 
+                    this.setState({
+                        todos: todos,
+                        message: response.data.message
+                    });
+                }
+            }).catch(error => {
+            console.error(error);
         });
-      })
-      .catch(error => {
-        console.error('Read Todo Error:', error);
-
-      });
-  }
-
-  render() {
-    return (
-      <TodoContext.Provider value={{
-        ...this.state,
-        createTodo: this.createTodo,
-        readTodo: this.readTodo,
-        updateTodo: this.updateTodo,
-        deleteTodo: this.deleteTodo,
-      }}>
-        {this.props.children}
-      </TodoContext.Provider>
-    );
-  }
+    }
+ 
+    render() {
+        return (
+            <TodoContext.Provider value={{
+                ...this.state,
+                createTodo: this.createTodo.bind(this),
+                updateTodo: this.updateTodo.bind(this),
+                deleteTodo: this.deleteTodo.bind(this),
+                setMessage: (message) => this.setState({message: message}),
+            }}>
+                {this.props.children}
+            </TodoContext.Provider>
+        );
+    }
 }
-
-export default TodoContextsProvider;
+ 
+export default TodoContextProvider;
