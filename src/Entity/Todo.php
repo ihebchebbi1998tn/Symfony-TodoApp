@@ -19,6 +19,12 @@ class Todo
     #[ORM\Column(length: 500)]
     private ?string $description = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $user = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $role = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -48,6 +54,30 @@ class Todo
 
     public function toArray()
     {
-        return ['id' => $this->id, 'name' => $this->name, 'description' => $this->description];
+        return ['id' => $this->id, 'name' => $this->name, 'description' => $this->description , 'user' => $this->user , 'role' => $this->role];
+    }
+
+    public function getUser(): ?string
+    {
+        return $this->user;
+    }
+
+    public function setUser(string $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getRole(): ?string
+    {
+        return $this->role;
+    }
+
+    public function setRole(string $role): static
+    {
+        $this->role = $role;
+
+        return $this;
     }
 }

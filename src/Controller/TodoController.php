@@ -41,7 +41,8 @@ class TodoController extends AbstractController
         $todo = new Todo();
         $todo->setName($content->name);
         $todo->setDescription($content->description);
-
+        $todo->setUser($content->user);
+        $todo->setRole($content->role);
 
         try {
             $this->entityManager->persist($todo);
@@ -65,6 +66,8 @@ public function update(Request $request, Todo $todo): Response
     $content = json_decode($request->getContent());
     $todo->setName($content->name);
     $todo->setDescription($content->description); // Add this line to update description as well
+    $todo->setUser($content->user);
+    $todo->setRole($content->role);
 
     try {
         $this->entityManager->flush();

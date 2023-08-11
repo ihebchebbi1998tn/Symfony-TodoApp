@@ -63,6 +63,8 @@ class TodoContextProvider extends React.Component {
                             ...todos[todoIndex],
                             name: data.name,
                             description: data.description,
+                            user: data.user,
+                            role: data.role,
                         };
                     }
     
