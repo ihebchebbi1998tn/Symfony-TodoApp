@@ -13,7 +13,7 @@ class Todo
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255 , unique: true)]
     private ?string $name = null;
 
     #[ORM\Column(length: 500)]
@@ -24,6 +24,9 @@ class Todo
 
     #[ORM\Column(length: 255)]
     private ?string $role = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $date = null;
 
     public function getId(): ?int
     {
@@ -54,7 +57,7 @@ class Todo
 
     public function toArray()
     {
-        return ['id' => $this->id, 'name' => $this->name, 'description' => $this->description , 'user' => $this->user , 'role' => $this->role];
+        return ['id' => $this->id, 'name' => $this->name, 'description' => $this->description , 'user' => $this->user , 'role' => $this->role , 'date' => $this->date];
     }
 
     public function getUser(): ?string
@@ -77,6 +80,18 @@ class Todo
     public function setRole(string $role): static
     {
         $this->role = $role;
+
+        return $this;
+    }
+
+    public function getDate(): ?string
+    {
+        return $this->date;
+    }
+
+    public function setDate(string $date): static
+    {
+        $this->date = $date;
 
         return $this;
     }

@@ -43,6 +43,7 @@ class TodoController extends AbstractController
         $todo->setDescription($content->description);
         $todo->setUser($content->user);
         $todo->setRole($content->role);
+        $todo->setDate($content->date);
 
         try {
             $this->entityManager->persist($todo);
@@ -68,6 +69,8 @@ public function update(Request $request, Todo $todo): Response
     $todo->setDescription($content->description); // Add this line to update description as well
     $todo->setUser($content->user);
     $todo->setRole($content->role);
+    $todo->setDate($content->date);
+
 
     try {
         $this->entityManager->flush();
