@@ -4,6 +4,7 @@ import TodoContextsProvider from './Contexts/TodoContexts'
 import TodoTable from './Components/TodoTable';
 import { CssBaseline } from '@mui/material';
 import AppSnackBar from './Components/AppSnackBar';
+import DefaultThemeProvider from './theme/defaultThemeProvider';
 
 class App extends React.Component {
   render() {
@@ -16,4 +17,7 @@ class App extends React.Component {
   } ;
 }
 
-ReactDOM.render(<App /> , document.getElementById('root'));
+ReactDOM.render(
+  <DefaultThemeProvider><App /></DefaultThemeProvider>
+
+, document.getElementById('root'));

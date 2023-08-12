@@ -19,6 +19,7 @@ import DoneIcon from '@mui/icons-material/Done';
 import CancelIcon from '@mui/icons-material/Cancel';
 import DeleteDialog from './DeleteDialog';
 import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
 
 function TodoTable() {
   const context = useContext(TodoContext);
@@ -49,17 +50,27 @@ function TodoTable() {
           event.preventDefault();
           context.readTodo(searchQuery);
         }}
+        style={{ marginBottom: '20px', marginTop: '20px' }}
       >
-       
-            <TextField
-        fullWidth={true}
-        label="Search"
-        value={searchQuery}
-        onChange={(event) => {
-          setSearchQuery(event.target.value);
-          context.readTodo(event.target.value); // Trigger search as you type
-        }}
-      />
+        <div align="center">
+          <TextField
+            label="Rechercher"
+            value={searchQuery}
+            onChange={(event) => {
+              setSearchQuery(event.target.value);
+              context.readTodo(event.target.value); // Déclencher la recherche à mesure que vous tapez
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton color={"primary"} type="submit">
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </div>
       </form>
       <form
         onSubmit={(event) => {
@@ -81,10 +92,10 @@ function TodoTable() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Task</TableCell>
+              <TableCell>Tâche</TableCell>
               <TableCell>Description</TableCell>
-              <TableCell>User</TableCell>
-              <TableCell>Role</TableCell>
+              <TableCell>Utilisateur</TableCell>
+              <TableCell>Rôle</TableCell>
               <TableCell>Date</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
@@ -98,7 +109,7 @@ function TodoTable() {
                     setAddTodo(event.target.value);
                   }}
                   fullWidth={true}
-                  label="New Task"
+                  label="Nouvelle tâche"
                 />
               </TableCell>
               <TableCell align="center">
@@ -118,7 +129,7 @@ function TodoTable() {
                     setAddUser(event.target.value);
                   }}
                   fullWidth={true}
-                  label="User"
+                  label="Utilisateur"
                 />
               </TableCell>
               <TableCell>
@@ -129,11 +140,11 @@ function TodoTable() {
                       setAddRole(event.target.value);
                     }}
                     displayEmpty
-                    inputProps={{ 'aria-label': 'User' }}
+                    inputProps={{ 'aria-label': 'Utilisateur' }}
                   >
                     <MenuItem value={'Admin'}>Admin</MenuItem>
-                    <MenuItem value={'User'}>User</MenuItem>
-                    <MenuItem value={'Guest'}>Guest</MenuItem>
+                    <MenuItem value={'User'}>Utilisateur</MenuItem>
+                    <MenuItem value={'Guest'}>Invité</MenuItem>
                   </Select>
                 </div>
               </TableCell>
@@ -146,10 +157,11 @@ function TodoTable() {
                   }}
                   fullWidth={true}
                   label="Date"
+                  color={"primary"}
                 />
               </TableCell>
               <TableCell align="right">
-                <IconButton type="submit">
+                <IconButton color={"primary"} type="submit">
                   <AddIcon />
                 </IconButton>
               </TableCell>
@@ -207,12 +219,12 @@ function TodoTable() {
                             setEditRole(event.target.value);
                           }}
                           displayEmpty
-                          inputProps={{ 'aria-label': 'User' }}
+                          inputProps={{ 'aria-label': 'Utilisateur' }}
                         >
                           <MenuItem value={'admin'}>admin</MenuItem>
                           <MenuItem value={'normal'}>normal</MenuItem>
-                          <MenuItem value={'user'}>user</MenuItem>
-                          <MenuItem value={'guest'}>guest</MenuItem>
+                          <MenuItem value={'user'}>utilisateur</MenuItem>
+                          <MenuItem value={'guest'}>invité</MenuItem>
                         </Select>
                       </div>
                     ) : (
@@ -239,7 +251,7 @@ function TodoTable() {
                   <TableCell align="right">
                     {editIsShown === todo.id ? (
                       <div>
-                        <IconButton
+                        <IconButton color={"primary"}
                           onClick={() => {
                             context.updateTodo({
                               id: todo.id,
@@ -264,7 +276,7 @@ function TodoTable() {
                       </div>
                     ) : (
                       <Fragment>
-                        <IconButton
+                        <IconButton color={"primary"}
                           onClick={() => {
                             setEditIsShown(todo.id);
                             setEditTodo(todo.name);
@@ -276,13 +288,13 @@ function TodoTable() {
                         >
                           <EditIcon />
                         </IconButton>
-                        <IconButton
+                        <IconButton color={"secondary"}
                           onClick={() => {
                             setDeleteConfirmationIsShown(true);
                             setTodoToBeDeleted(todo);
                           }}
                         >
-                          <DeleteIcon />
+                          <DeleteIcon primary />
                         </IconButton>
                       </Fragment>
                     )}
