@@ -9,6 +9,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\TodoRepository;
 use App\Entity\Todo;
+use DateTime;
+use DateTimeZone;
 
 #[Route('/api/todo', name: 'api_todo')]
 class TodoController extends AbstractController
@@ -38,27 +40,45 @@ class TodoController extends AbstractController
     public function create(Request $request): Response
     {
         $content = json_decode($request->getContent());
+    
+        // Custom validation logic to check if all fields are not empty
+        if (empty($content->name) || empty($content->description) || empty($content->user) || empty($content->role) || empty($content->date)) {
+            return $this->json([
+                'message' => ['text' => 'All fields must be filled!', 'level' => 'error'],
+            ]);
+        }
+    
+        // Check if the provided date is before today's date in the Africa/Tunis timezone
+        $timezone = new DateTimeZone('Africa/Tunis');
+        $providedDate = new DateTime($content->date, $timezone);
+        $currentDate = new DateTime('now', $timezone);
+        
+        if ($providedDate < $currentDate) {
+            return $this->json([
+                'message' => ['text' => 'Date cannot be before today!', 'level' => 'error'],
+            ]);
+        }
+    
         $todo = new Todo();
         $todo->setName($content->name);
         $todo->setDescription($content->description);
         $todo->setUser($content->user);
         $todo->setRole($content->role);
         $todo->setDate($content->date);
-
+    
         try {
             $this->entityManager->persist($todo);
             $this->entityManager->flush();
+    
+            return $this->json([
+                'todo' => $todo->toArray(),
+                'message' => ['text' => ['Todo has been created!', 'Task:' . $content->name], 'level' => 'success'],
+            ]);
         } catch (\Exception $exception) {
             return $this->json([
-                'message' => ['text' => ['Could not submit to do to the database.'], 'level' => 'error'],
+                'message' => ['text' => ['Could not submit todo to the database.'], 'level' => 'error'],
             ]);
         }
-
-        return $this->json([
-            'todo' => $todo->toArray(),
-            'message' => ['text' => ['Todo has been created!', 'Task:' . $content->name], 'level' => 'success'],
-        ]);
-
     }
 
     #[Route('/update/{id}', name: 'api_todo_update', methods: ['PUT'])]
